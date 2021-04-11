@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 class FullResponse {
   final Results results;
 
-  FullResponse({this.results});
+  FullResponse({@required this.results});
 
   factory FullResponse.fromJson(Map<String, dynamic> parsedJson) {
     var res = Results.fromJson(parsedJson['results']);
@@ -27,7 +29,11 @@ class Day {
   final int max;
   final int min;
 
-  Day({this.date, this.weekday, this.max, this.min});
+  Day(
+      {@required this.date,
+      @required this.weekday,
+      @required this.max,
+      @required this.min});
 
   factory Day.fromJson(Map<String, dynamic> json) {
     return Day(

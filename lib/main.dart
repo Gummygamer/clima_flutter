@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'forecast.dart';
 import 'key.dart';
+import 'forecastchart.dart';
 
 void main() {
   runApp(MyApp());
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> {
             future: futureFullResponse,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data.results.forecast[0].date);
+                return ForecastChart(data: snapshot.data.results);
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
