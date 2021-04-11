@@ -15,6 +15,8 @@ Future<FullResponse> fetchFullResponse() async {
   final response = await http.get(Uri.https('api.hgbrasil.com', '/weather',
       {'key': key, 'city_name': 'Fortaleza,CE'}));
 
+  //print(response.body);
+
   if (response.statusCode == 200) {
     return FullResponse.fromJson(jsonDecode(response.body));
   } else {
