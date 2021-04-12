@@ -4,16 +4,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'forecast.dart';
-import 'key.dart';
 import 'forecastchart.dart';
 
-void main() {
-  runApp(MyApp());
+// Define a custom Form widget.
+class InputForm extends StatefulWidget {
+  @override
+  InputFormState createState() {
+    return InputFormState();
+  }
 }
 
-Future<FullResponse> fetchFullResponse() async {
+Future<FullResponse> fetchFullResponse(key, city, state) async {
   final response = await http.get(Uri.https('api.hgbrasil.com', '/weather',
-      {'key': key, 'city_name': 'Fortaleza,CE'}));
+      {'key': key, 'city_name': city + ',' + state}));
 
   //print(response.body);
 
@@ -24,17 +27,119 @@ Future<FullResponse> fetchFullResponse() async {
   }
 }
 
-class _MyAppState extends State<MyApp> {
+class InputFormState extends State<InputForm> {
   Future<FullResponse> futureFullResponse;
+  bool submitted = false;
+  final _formKey = GlobalKey<FormState>();
+
+  final cityFieldController = TextEditingController();
+  final stateFieldController = TextEditingController();
+  final keyFieldController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    futureFullResponse = fetchFullResponse();
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    cityFieldController.dispose();
+    stateFieldController.dispose();
+    keyFieldController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Column(children: [
+      Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), labelText: 'Cidade'),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Campo obrigatório';
+                }
+                return null;
+              },
+              controller: cityFieldController,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Estado',
+                  hintText: 'CE'),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Campo obrigatório';
+                }
+                return null;
+              },
+              controller: stateFieldController,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), labelText: 'Chave'),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Campo obrigatório';
+                }
+                return null;
+              },
+              controller: keyFieldController,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  setState(() {
+                    futureFullResponse = fetchFullResponse(
+                        keyFieldController.text,
+                        cityFieldController.text,
+                        stateFieldController.text);
+                    submitted = true;
+                  });
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Processando')));
+                }
+              },
+              child: Text('Enviar'),
+            ),
+          ],
+        ),
+      ),
+      FutureBuilder<FullResponse>(
+        future: futureFullResponse,
+        builder: (context, snapshot) {
+          //print(submitted);
+          if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          if (submitted) {
+            return ForecastChart(data: snapshot.data.results);
+          }
+          return Text('');
+        },
+      )
+    ]);
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var form = InputForm();
     return MaterialApp(
       title: 'Clima flutter',
       theme: ThemeData(
@@ -44,21 +149,9 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Clima flutter'),
         ),
-        body: Center(
-          child: FutureBuilder<FullResponse>(
-            future: futureFullResponse,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ForecastChart(data: snapshot.data.results);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              // By default, show a loading spinner.
-              return CircularProgressIndicator();
-            },
-          ),
-        ),
+        body: Column(children: [
+          form,
+        ]),
       ),
     );
   }

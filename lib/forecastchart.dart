@@ -31,15 +31,17 @@ class ForecastChart extends StatelessWidget {
           measureFn: (Day d, _) => d.min,
           colorFn: (Day d, _) => charts.ColorUtil.fromDartColor(Colors.blue))
     ];
-    return charts.TimeSeriesChart(
-      series,
-      animate: true,
-      domainAxis: new charts.DateTimeAxisSpec(
-        tickProviderSpec: charts.DayTickProviderSpec(increments: [1]),
-      ),
-      primaryMeasureAxis: new charts.NumericAxisSpec(
-          tickProviderSpec:
-              new charts.BasicNumericTickProviderSpec(zeroBound: false)),
-    );
+    return Container(
+        height: 400,
+        child: charts.TimeSeriesChart(
+          series,
+          animate: true,
+          domainAxis: new charts.DateTimeAxisSpec(
+            tickProviderSpec: charts.DayTickProviderSpec(increments: [1]),
+          ),
+          primaryMeasureAxis: new charts.NumericAxisSpec(
+              tickProviderSpec:
+                  new charts.BasicNumericTickProviderSpec(zeroBound: false)),
+        ));
   }
 }
