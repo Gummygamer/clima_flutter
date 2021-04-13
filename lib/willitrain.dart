@@ -14,13 +14,24 @@ class WillItRain extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             itemCount: data.forecast.length,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 50,
-                color: Colors.blue[index],
-                child: Center(
-                    child: Text(
-                        'Data: ${data.forecast[index].date} Prognóstico: ${data.forecast[index].description}')),
-              );
+              return Column(children: [
+                Row(children: [
+                  Container(
+                    height: 80,
+                    width: 172,
+                    color: Colors.blue,
+                    child: Center(child: Text('${data.forecast[index].date}')),
+                  ),
+                  Container(
+                    height: 80,
+                    width: 172,
+                    color: Colors.lightGreen,
+                    child: Center(
+                        child: Text('${data.forecast[index].description}')),
+                  )
+                ]),
+                Divider(),
+              ]);
             }));
   }
 }

@@ -20,7 +20,7 @@ Future<FullResponse> fetchFullResponse(city, state) async {
   final response = await http.get(Uri.https('api.hgbrasil.com', '/weather',
       {'key': key, 'city_name': city + ',' + state}));
 
-  print(response.body);
+  //print(response.body);
 
   if (response.statusCode == 200) {
     return FullResponse.fromJson(jsonDecode(response.body));
@@ -98,6 +98,7 @@ class InputFormState extends State<InputForm> {
                   },
                   child: Text('Vai chover?'),
                 ),
+                Text('    '),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
