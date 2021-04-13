@@ -1,11 +1,10 @@
-import 'package:clima_flutter/forecast.dart';
-import 'package:clima_flutter/willitrain.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'forecast.dart';
 import 'forecastchart.dart';
+import 'willitrain.dart';
 import 'key.dart';
 
 // Define a custom Form widget.
