@@ -16,8 +16,7 @@ class ForecastChart extends StatelessWidget {
           domainFn: (Day d, _) => DateTime.now().add(Duration(
               days: int.parse(d.date[0] + d.date[1]) -
                   int.parse(
-                      data.forecast[0].date[0] + data.forecast[0].date[1]) -
-                  1)),
+                      data.forecast[0].date[0] + data.forecast[0].date[1]))),
           measureFn: (Day d, _) => d.max,
           colorFn: (Day d, _) => charts.ColorUtil.fromDartColor(Colors.red)),
       charts.Series(
@@ -26,8 +25,7 @@ class ForecastChart extends StatelessWidget {
           domainFn: (Day d, _) => DateTime.now().add(Duration(
               days: int.parse(d.date[0] + d.date[1]) -
                   int.parse(
-                      data.forecast[0].date[0] + data.forecast[0].date[1]) -
-                  1)),
+                      data.forecast[0].date[0] + data.forecast[0].date[1]))),
           measureFn: (Day d, _) => d.min,
           colorFn: (Day d, _) => charts.ColorUtil.fromDartColor(Colors.blue))
     ];

@@ -126,11 +126,13 @@ class InputFormState extends State<InputForm> {
           if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          if (submitted && temperatures) {
-            return ForecastChart(data: snapshot.data.results);
-          }
-          if (submitted) {
-            return WillItRain(data: snapshot.data.results);
+          if (snapshot.hasData) {
+            if (submitted && temperatures) {
+              return ForecastChart(data: snapshot.data.results);
+            }
+            if (submitted) {
+              return WillItRain(data: snapshot.data.results);
+            }
           }
           return Text('');
         },
@@ -161,7 +163,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Clima flutter'),
         ),
-        body: Column(children: [
+        body: ListView(children: [
           form,
         ]),
       ),
