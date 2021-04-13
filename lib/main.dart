@@ -1,10 +1,12 @@
 import 'package:clima_flutter/forecast.dart';
+import 'package:clima_flutter/willitrain.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'forecast.dart';
 import 'forecastchart.dart';
+import 'key.dart';
 
 // Define a custom Form widget.
 class InputForm extends StatefulWidget {
@@ -14,11 +16,11 @@ class InputForm extends StatefulWidget {
   }
 }
 
-Future<FullResponse> fetchFullResponse(key, city, state) async {
+Future<FullResponse> fetchFullResponse(city, state) async {
   final response = await http.get(Uri.https('api.hgbrasil.com', '/weather',
       {'key': key, 'city_name': city + ',' + state}));
 
-  //print(response.body);
+  print(response.body);
 
   if (response.statusCode == 200) {
     return FullResponse.fromJson(jsonDecode(response.body));
@@ -30,18 +32,17 @@ Future<FullResponse> fetchFullResponse(key, city, state) async {
 class InputFormState extends State<InputForm> {
   Future<FullResponse> futureFullResponse;
   bool submitted = false;
+  bool temperatures = true;
   final _formKey = GlobalKey<FormState>();
 
   final cityFieldController = TextEditingController();
   final stateFieldController = TextEditingController();
-  final keyFieldController = TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     cityFieldController.dispose();
     stateFieldController.dispose();
-    keyFieldController.dispose();
     super.dispose();
   }
 
@@ -79,33 +80,41 @@ class InputFormState extends State<InputForm> {
               },
               controller: stateFieldController,
             ),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(), labelText: 'Chave'),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Campo obrigatório';
-                }
-                return null;
-              },
-              controller: keyFieldController,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  setState(() {
-                    futureFullResponse = fetchFullResponse(
-                        keyFieldController.text,
-                        cityFieldController.text,
-                        stateFieldController.text);
-                    submitted = true;
-                  });
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processando')));
-                }
-              },
-              child: Text('Enviar'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      setState(() {
+                        futureFullResponse = fetchFullResponse(
+                            cityFieldController.text,
+                            stateFieldController.text);
+                        submitted = true;
+                        temperatures = false;
+                      });
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text('Processando')));
+                    }
+                  },
+                  child: Text('Vai chover?'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      setState(() {
+                        futureFullResponse = fetchFullResponse(
+                            cityFieldController.text,
+                            stateFieldController.text);
+                        submitted = true;
+                        temperatures = true;
+                      });
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text('Processando')));
+                    }
+                  },
+                  child: Text('Temperaturas'),
+                ),
+              ],
             ),
           ],
         ),
@@ -117,8 +126,11 @@ class InputFormState extends State<InputForm> {
           if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          if (submitted) {
+          if (submitted && temperatures) {
             return ForecastChart(data: snapshot.data.results);
+          }
+          if (submitted) {
+            return WillItRain(data: snapshot.data.results);
           }
           return Text('');
         },

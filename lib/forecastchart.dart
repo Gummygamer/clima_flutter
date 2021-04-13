@@ -32,7 +32,7 @@ class ForecastChart extends StatelessWidget {
           colorFn: (Day d, _) => charts.ColorUtil.fromDartColor(Colors.blue))
     ];
     return Container(
-        height: 400,
+        height: 465,
         child: charts.TimeSeriesChart(
           series,
           animate: true,

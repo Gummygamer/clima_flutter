@@ -28,12 +28,14 @@ class Day {
   final String weekday;
   final int max;
   final int min;
+  final String description;
 
   Day(
       {@required this.date,
       @required this.weekday,
       @required this.max,
-      @required this.min});
+      @required this.min,
+      @required this.description});
 
   factory Day.fromJson(Map<String, dynamic> json) {
     return Day(
@@ -41,6 +43,7 @@ class Day {
       weekday: json['weekday'],
       max: json['max'],
       min: json['min'],
+      description: json['description'],
     );
   }
 }
